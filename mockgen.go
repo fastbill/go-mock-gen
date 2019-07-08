@@ -201,7 +201,7 @@ func calcResultMock(existingMock string, newMock string) (string, error) {
 	for _, fn := range bodyFunctions {
 		bodyStr += fn.fullFunction
 	}
-
+	bodyStr = strings.TrimSuffix(bodyStr, "\n")
 	return newPreamble + bodyStr, nil
 }
 

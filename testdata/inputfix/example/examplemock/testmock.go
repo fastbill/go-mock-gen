@@ -42,4 +42,3 @@ func (m *TestMock) FunctionD(user *model.StructA) error {
 
 	return args.Error(0)
 }
-
