@@ -20,9 +20,9 @@ import (
 
 var errNotFound = errors.New("entity not found")
 
-var structNameRegex = regexp.MustCompile("type (.*) struct \\{")
-var preambleRegex = regexp.MustCompile("(?s)^(.*type .*? struct \\{\n\tmock.Mock\n\\}\n\n)(.*)$")
-var signatureRegex = regexp.MustCompile("func \\(..? \\*.*?\\) (.*) \\{")
+var structNameRegex = regexp.MustCompile(`type (.*) struct \{`)
+var preambleRegex = regexp.MustCompile(`(?s)^(.*type .*? struct \{\n\tmock.Mock\n\}\n\n)(.*)$`)
+var signatureRegex = regexp.MustCompile(`func \(..? \*.*?\) (.*) \{`)
 
 type functionBlock struct {
 	fullFunction string
@@ -64,7 +64,7 @@ func generateNewMock(path, interfaceName, structName string) error {
 
 	// Create mock folder if it does not exist.
 	folderPath := folderPath(path, iface)
-	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
+	if _, err = os.Stat(folderPath); os.IsNotExist(err) {
 		err = os.Mkdir(folderPath, os.ModePerm)
 		if err != nil {
 			return errors.Wrap(err, "failed to create directory")
@@ -73,7 +73,7 @@ func generateNewMock(path, interfaceName, structName string) error {
 
 	// Check if the mock file already exists.
 	filePath := folderPath + "/" + strings.ToLower(structName) + ".go"
-	if _, err := os.Stat(filePath); err == nil {
+	if _, err = os.Stat(filePath); err == nil {
 		return fmt.Errorf("file %s already exists, delete it before re-generating it", filePath)
 	} else if !os.IsNotExist(err) {
 		return errors.Wrap(err, "failed to determine whether file exists")
@@ -242,6 +242,7 @@ func readExistingFiles(path string, iface *Interface) (string, string, error) {
 	}
 
 	for _, file := range files {
+		// nolint: gosec
 		blob, err := ioutil.ReadFile(file)
 		if err != nil {
 			return "", "", err
