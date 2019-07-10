@@ -48,4 +48,141 @@ Currently the following restrictions apply if you want to use this tool to updat
 * One of the comments contains the package name and interface name in the format `<packageName>.<interfaceName>`.
 * The receiver variable is consistently called `m`.
 
+## Example
+### Creating a New Mock
+Given the following interface
+```go
+type Exampler interface {
+	FunctionA(user *model.StructA) (resultStr string, err error)
+	FunctionZ(id int, user *model.StructA) (*model.StructB, *model.StructA, error)
+	FunctionC(name, address string, age int) *model.StructA
+}
+```
+go-mock-gen will generate the following file
+```go
+package examplemock
+
+import (
+	"github.com/some-path/model"
+	"github.com/stretchr/testify/mock"
+)
+
+// TestMock is a mock implementation of the example.Exampler interface.
+type TestMock struct {
+	mock.Mock
+}
+
+// FunctionA is a mock implementation of example.Exampler#FunctionA.
+func (m *TestMock) FunctionA(user *model.StructA) (string, error) {
+	args := m.Called(user)
+
+	return args.String(0), args.Error(1)
+}
+
+// FunctionC is a mock implementation of example.Exampler#FunctionC.
+func (m *TestMock) FunctionC(name string, address string, age int) *model.StructA {
+	args := m.Called(name, address, age)
+
+	if args.Get(0) != nil {
+		return args.Get(0).(*model.StructA)
+	}
+
+	return nil
+}
+
+// FunctionZ is a mock implementation of example.Exampler#FunctionZ.
+func (m *TestMock) FunctionZ(id int, user *model.StructA) (*model.StructB, *model.StructA, error) {
+	args := m.Called(id, user)
+
+	if args.Get(0) != nil && args.Get(1) != nil {
+		return args.Get(0).(*model.StructB), args.Get(1).(*model.StructA), args.Error(2)
+	}
+
+	return nil, nil, args.Error(2)
+}
+
+```
+
+### Updating an Existing Mock
+Given the interface above is changed to
+```go
+type Exampler interface {
+	FunctionZ(id int, user *model.StructA) (*model.StructB, *model.StructA, error)
+	FunctionC(name, address string) *model.StructA
+	FunctionD(user *model.StructA) error
+}
+```
+and there is an existing mock with the following methods
+```go
+// FunctionA is a mock implementation of example.Exampler#FunctionA.
+func (m *TestMock) FunctionA(user *model.StructA) (string, error) {
+	args := m.Called(user)
+
+	return args.String(0), args.Error(1)
+}
+
+// FunctionZ is a mock implementation of example.Exampler#FunctionZ.
+func (m *TestMock) FunctionZ(id int, user *model.StructA) (*model.StructB, *model.StructA, error) {
+	args := m.Called(id, user)
+
+	if args.Get(0) != nil {
+		return args.Get(0).(*model.StructB), nil, args.Error(2)
+	}
+
+	if args.Get(1) != nil {
+		return nil, args.Get(1).(*model.StructA), args.Error(2)
+	}
+
+	return nil, nil, args.Error(2)
+}
+
+// FunctionC is a mock implementation of example.Exampler#FunctionC.
+func (m *TestMock) FunctionC(name string, address string, age int) *model.StructA {
+	args := m.Called(name, address, age)
+
+	if args.Get(0) != nil {
+		return args.Get(0).(*model.StructA)
+	}
+
+	return nil
+}
+```
+go-mock-gen will update these to
+```go
+// FunctionZ is a mock implementation of example.Exampler#FunctionZ.
+func (m *TestMock) FunctionZ(id int, user *model.StructA) (*model.StructB, *model.StructA, error) {
+	args := m.Called(id, user)
+
+	if args.Get(0) != nil {
+		return args.Get(0).(*model.StructB), nil, args.Error(2)
+	}
+
+	if args.Get(1) != nil {
+		return nil, args.Get(1).(*model.StructA), args.Error(2)
+	}
+
+	return nil, nil, args.Error(2)
+}
+
+// FunctionC is a mock implementation of example.Exampler#FunctionC.
+func (m *TestMock) FunctionC(name string, address string) *model.StructA {
+	args := m.Called(name, address)
+
+	if args.Get(0) != nil {
+		return args.Get(0).(*model.StructA)
+	}
+
+	return nil
+}
+
+// FunctionD is a mock implementation of example.Exampler#FunctionD.
+func (m *TestMock) FunctionD(user *model.StructA) error {
+	args := m.Called(user)
+
+	return args.Error(0)
+}
+```
+Notice that the customizations that were done in FunctionZ are kept in the update since the signiture of FunctionZ is still the same.
+
+## Credit
 Created with some code from [github.com/vektra/mockery](https://github.com/vektra/mockery).
