@@ -6,12 +6,9 @@ go:
 before_install:
   - go get -u github.com/golang/dep/cmd/dep
   - dep ensure
-  - go get -u gopkg.in/alecthomas/gometalinter.v2
-  - gometalinter.v2 --install
 
 script:
   - go test -race -cover ./...
-  - gometalinter.v2 --vendor --exclude="./testdata/**/*" --deadline=300s ./...
 
 notifications:
 email: false
