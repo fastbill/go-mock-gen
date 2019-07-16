@@ -199,7 +199,7 @@ func calcResultMock(existingMock string, newMock string) (string, error) {
 	bodyFunctions := combineFunctions(existingFunctions, newFunctions)
 	bodyStr := ""
 	for _, fn := range bodyFunctions {
-		bodyStr += fn.fullFunction
+		bodyStr += fn.fullFunction + "\n\n"
 	}
 	bodyStr = strings.TrimSuffix(bodyStr, "\n")
 	return newPreamble + bodyStr, nil
@@ -275,6 +275,10 @@ func extractBlocksAndPreamble(input string) ([]functionBlock, string, error) {
 
 	blocks := []functionBlock{}
 	for _, fn := range functions {
+		if strings.HasSuffix(fn, "\n\n") {
+			fn = strings.TrimRight(fn, "\n")
+		}
+
 		matches := signatureRegex.FindStringSubmatch(fn)
 		if len(matches) < 2 {
 			return nil, "", errors.New("failed to find function signature: " + fn)
