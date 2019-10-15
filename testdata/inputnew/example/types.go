@@ -1,6 +1,6 @@
 package example
 
-import "github.com/fastbill/go-mock-gen/testdata/inputnew/model"
+import "github.com/fastbill/go-mock-gen/v2/testdata/inputnew/model"
 
 // Exampler is an interface for the test.
 type Exampler interface {
