@@ -1,6 +1,7 @@
 package examplemock
 
 import (
+	httperrors "github.com/fastbill/go-httperrors/v2"
 	"github.com/fastbill/go-mock-gen/testdata/inputnew/model"
 	"github.com/stretchr/testify/mock"
 )
@@ -37,8 +38,12 @@ func (m *TestMock) FunctionC(name string, address string) *model.StructA {
 }
 
 // FunctionD is a mock implementation of example.Exampler#FunctionD.
-func (m *TestMock) FunctionD(user *model.StructA) error {
+func (m *TestMock) FunctionD(user *model.StructA) *httperrors.HTTPError {
 	args := m.Called(user)
 
-	return args.Error(0)
+	if args.Get(0) != nil {
+		return args.Get(0).(*httperrors.HTTPError)
+	}
+
+	return nil
 }
