@@ -11,7 +11,7 @@ When updating existing mocks go-mock-gen only replaces the existing code in case
 
 ## Installation
 ```bash
-go get github.com/fastbill/go-mock-gen/v2
+go get github.com/fastbill/go-mock-gen
 ```
 
 ## Usage

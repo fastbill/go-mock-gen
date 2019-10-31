@@ -44,15 +44,21 @@ func main() {
 	flag.Parse()
 
 	if os.Args[3] != "-f" {
+		fmt.Println("Generating new mock...")
 		err := generateNewMock(os.Args[1], os.Args[2], os.Args[3])
 		if err != nil {
 			log.Println(err)
+			return
 		}
+		fmt.Println("Success!")
 	} else {
+		fmt.Println("Updating existing mock...")
 		err := updateMock(os.Args[1], os.Args[2])
 		if err != nil {
 			log.Println(err)
+			return
 		}
+		fmt.Println("Success!")
 	}
 }
 
