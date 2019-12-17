@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"go/build"
 	"go/types"
 	"io"
 	"io/ioutil"
@@ -62,12 +61,13 @@ func main() {
 	}
 }
 
-func generateNewMock(path, interfaceName, structName string) error {
-	iface, err := findInterface(path, interfaceName)
+func generateNewMock(interfaceFile, interfaceName, structName string) error {
+	iface, err := findInterface(interfaceFile, interfaceName)
 	if err != nil {
 		return errors.Wrap(err, "problem finding interface")
 	}
 
+	path := filepath.Dir(interfaceFile)
 	// Create mock folder if it does not exist.
 	folderPath := folderPath(path, iface)
 	if _, err = os.Stat(folderPath); os.IsNotExist(err) {
@@ -100,12 +100,13 @@ func generateNewMock(path, interfaceName, structName string) error {
 	return nil
 }
 
-func updateMock(path, interfaceName string) error {
-	iface, err := findInterface(path, interfaceName)
+func updateMock(interfaceFile, interfaceName string) error {
+	iface, err := findInterface(interfaceFile, interfaceName)
 	if err != nil {
 		return errors.Wrap(err, "problem finding interface")
 	}
 
+	path := filepath.Dir(interfaceFile)
 	existingMock, pathToExistingFile, err := readExistingFiles(path, iface)
 	if err != nil {
 		return errors.Wrap(err, "failed to read existing file(s)")
@@ -136,28 +137,19 @@ func updateMock(path, interfaceName string) error {
 	return nil
 }
 
-// findInterface loads the package that the path points to and retrieves the interface data
+// findInterface loads the package that the given interfaceFile is part of and retrieves the interface data
 // for the interface with the provided name.
-func findInterface(path, interfaceName string) (*Interface, error) {
-	absPath, err := filepath.Abs(path)
+func findInterface(interfaceFile, interfaceName string) (*Interface, error) {
+	absPath, err := filepath.Abs(interfaceFile)
 	if err != nil {
-		return nil, err
-	}
-
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		gopath = build.Default.GOPATH
-	}
-	importPath, err := filepath.Rel(gopath+"/src", absPath)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to find absolute file path: %w", err)
 	}
 
 	mode := packages.NeedName | packages.NeedFiles | packages.NeedCompiledGoFiles | packages.NeedImports
 	mode = mode | packages.NeedDeps | packages.NeedTypes | packages.NeedTypesSizes | packages.NeedSyntax | packages.NeedTypesInfo
-	pkgs, err := packages.Load(&packages.Config{Mode: mode}, importPath)
+	pkgs, err := packages.Load(&packages.Config{Mode: mode}, absPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load package with import path: %w", err)
 	}
 
 	if len(pkgs) != 1 {

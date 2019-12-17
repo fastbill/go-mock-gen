@@ -11,7 +11,7 @@ import (
 )
 
 func TestFindInterface(t *testing.T) {
-	iface, err := findInterface("./testdata/inputnew/example", "Exampler")
+	iface, err := findInterface("./testdata/inputnew/example/types.go", "Exampler")
 	require.NoError(t, err)
 	assert.Equal(t, 3, iface.Type.NumMethods())
 	assert.Equal(t, "FunctionA", iface.Type.Method(0).Name())
@@ -21,7 +21,7 @@ func TestFindInterface(t *testing.T) {
 
 func TestGenerateNewMock(t *testing.T) {
 	cleanup(t)
-	err := generateNewMock("./testdata/inputnew/example", "Exampler", "TestMock")
+	err := generateNewMock("./testdata/inputnew/example/types.go", "Exampler", "TestMock")
 	require.NoError(t, err)
 	expected, err := ioutil.ReadFile("./testdata/expectednew/result.go")
 	require.NoError(t, err, "error in test setup")
@@ -35,7 +35,7 @@ func TestUpdateMock(t *testing.T) {
 	err := copy.Copy("./testdata/inputfix/existing", "./testdata/inputfix/example/examplemock")
 	require.NoError(t, err, "error in test setup")
 
-	err = updateMock("./testdata/inputfix/example", "Exampler")
+	err = updateMock("./testdata/inputfix/example/types.go", "Exampler")
 	require.NoError(t, err)
 
 	expected, err := ioutil.ReadFile("./testdata/expectedfix/result.go")
