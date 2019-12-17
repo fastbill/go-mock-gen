@@ -17,28 +17,28 @@ go get github.com/fastbill/go-mock-gen
 ## Usage
 ### Creating a New Mock
 ```bash
-go-mock-gen <folderPath> <interfaceName> <mockStructName>
+go-mock-gen <filePath> <interfaceName> <mockStructName>
 ```
-* Set `folderPath` to the path to the folder where the interface can be found.
+* Set `filePath` to the path to the file that contains the interface that should be mocked.
 * Set `interfaceName` to the name of the interface that should be mocked.
 * Set `mockStructName` to the name you want to give the mock struct that you will use in your tests.
 
 #### Example
 ```
-go-mock-gen ./pkg/repository Persister Repository
+go-mock-gen ./pkg/repository/repository.go Persister Repository
 ```
 
 ### Updating an Existing Mock
 ```bash
-go-mock-gen <folderPath> <interfaceName> -f
+go-mock-gen <filePath> <interfaceName> -f
 ```
-* Set `folderPath` to the path to the folder where the interface can be found.
-* Set `interfaceName` to the name of the interface that should be mocked.
+* Set `filePath` to the path to the file that contains the interface that was mocked.
+* Set `interfaceName` to the name of the interface for which the mock should be updated.
 * ⚠️ The `-f` flag must be the last parameter.
 
 #### Example
 ```
-go-mock-gen ./pkg/repository Persister -f
+go-mock-gen ./pkg/repository/repository.go Persister -f
 ```
 
 ## Requirements to Use the Tool to Update Existings Mocks
