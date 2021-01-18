@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"flag"
 	"fmt"
 	"go/types"
@@ -168,17 +169,27 @@ func findInterface(interfaceFile, interfaceName string) (*Interface, error) {
 		return nil, errNotFound
 	}
 
-	iface, ok := typ.Underlying().(*types.Interface)
-	if !ok {
-		fmt.Println("cast to Interface failed")
-		return nil, errNotFound
+	i := &Interface{
+		Name:          interfaceName,
+		Pkg:           pkgs[0].Types,
+		QualifiedName: pkgs[0].Types.Path(),
+		FileName:      absPath,
+		// Type:          iface.Complete(),
+		NamedType: typ,
 	}
 
-	i := &Interface{
-		Name:      interfaceName,
-		Pkg:       pkgs[0].Types,
-		Type:      iface.Complete(),
-		NamedType: typ,
+	iface, ok := typ.Underlying().(*types.Interface)
+	if ok {
+		i.IsFunction = false
+		i.ActualInterface = iface
+	} else {
+		sig, ok := typ.Underlying().(*types.Signature)
+		if !ok {
+			fmt.Println("cast to signature failed")
+			return nil, errNotFound
+		}
+		i.IsFunction = true
+		i.SingleFunction = &Method{Name: "Execute", Signature: sig}
 	}
 
 	return i, nil
@@ -205,8 +216,8 @@ func calcResultMock(existingMock string, newMock string) (string, error) {
 
 func generateMock(iface *Interface, structName string, out io.Writer) error {
 	gen := NewGenerator(iface, structName)
-	gen.GeneratePrologue(iface.Pkg.Name())
-	err := gen.Generate()
+	gen.GeneratePrologue(context.TODO(), iface.Pkg.Name())
+	err := gen.Generate(context.TODO())
 	if err != nil {
 		return err
 	}

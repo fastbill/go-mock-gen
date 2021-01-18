@@ -13,10 +13,11 @@ import (
 func TestFindInterface(t *testing.T) {
 	iface, err := findInterface("./testdata/inputnew/example/types.go", "Exampler")
 	require.NoError(t, err)
-	assert.Equal(t, 3, iface.Type.NumMethods())
-	assert.Equal(t, "FunctionA", iface.Type.Method(0).Name())
-	assert.Equal(t, "FunctionC", iface.Type.Method(1).Name())
-	assert.Equal(t, "FunctionZ", iface.Type.Method(2).Name())
+	methods := iface.Methods()
+	assert.Equal(t, 3, len(methods))
+	assert.Equal(t, "FunctionA", methods[0].Name)
+	assert.Equal(t, "FunctionC", methods[1].Name)
+	assert.Equal(t, "FunctionZ", methods[2].Name)
 }
 
 func TestGenerateNewMock(t *testing.T) {
