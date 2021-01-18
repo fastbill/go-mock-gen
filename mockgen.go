@@ -174,8 +174,7 @@ func findInterface(interfaceFile, interfaceName string) (*Interface, error) {
 		Pkg:           pkgs[0].Types,
 		QualifiedName: pkgs[0].Types.Path(),
 		FileName:      absPath,
-		// Type:          iface.Complete(),
-		NamedType: typ,
+		NamedType:     typ,
 	}
 
 	iface, ok := typ.Underlying().(*types.Interface)
