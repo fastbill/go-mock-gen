@@ -92,7 +92,9 @@ func NewGenerator(iface *Interface, structName string) *Generator {
 }
 func (g *Generator) populateImports(ctx context.Context) {
 	for _, method := range g.iface.Methods() {
+		fmt.Println(method.Name)
 		ftype := method.Signature
+		fmt.Println(ftype.Results())
 		g.addImportsFromTuple(ctx, ftype.Params())
 		g.addImportsFromTuple(ctx, ftype.Results())
 		g.renderType(ctx, g.iface.NamedType)
