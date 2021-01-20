@@ -1,7 +1,7 @@
 package examplemock
 
 import (
-	"github.com/fastbill/go-mock-gen/testdata/inputnew/model"
+	"github.com/fastbill/go-mock-gen/test/inputnew/model"
 	"github.com/stretchr/testify/mock"
 )
 

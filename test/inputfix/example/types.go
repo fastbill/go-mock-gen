@@ -2,7 +2,7 @@ package example
 
 import (
 	"github.com/fastbill/go-httperrors/v2"
-	"github.com/fastbill/go-mock-gen/testdata/inputnew/model"
+	"github.com/fastbill/go-mock-gen/test/inputnew/model"
 )
 
 // Exampler is an interface for the test.

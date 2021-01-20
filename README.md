@@ -186,3 +186,6 @@ Notice that the customizations that were done in FunctionZ are kept in the updat
 
 ## Credit
 Created with some code from [github.com/vektra/mockery](https://github.com/vektra/mockery).
+
+## Note
+The folder with the test data is called `test` here instead of `testdata` because otherwise `go mod` commands don't pick up the dependencies correctly.

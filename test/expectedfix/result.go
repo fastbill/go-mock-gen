@@ -2,7 +2,7 @@ package examplemock
 
 import (
 	httperrors "github.com/fastbill/go-httperrors/v2"
-	"github.com/fastbill/go-mock-gen/testdata/inputnew/model"
+	"github.com/fastbill/go-mock-gen/test/inputnew/model"
 	"github.com/stretchr/testify/mock"
 )
 
