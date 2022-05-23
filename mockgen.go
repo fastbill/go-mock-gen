@@ -87,7 +87,7 @@ func generateNewMock(interfaceFile, interfaceName, structName string) error {
 	}
 
 	// Create file to write the mock into.
-	f, err := os.Create(filePath)
+	f, err := os.Create(filePath) //nolint: gosec
 	if err != nil {
 		return errors.Wrap(err, "failed to create file")
 	}
