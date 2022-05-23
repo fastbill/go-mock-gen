@@ -182,7 +182,7 @@ func (m *TestMock) FunctionD(user *model.StructA) error {
 	return args.Error(0)
 }
 ```
-Notice that the customizations that were done in FunctionZ are kept in the update since the signiture of FunctionZ is still the same.
+Notice that the customizations that were done in FunctionZ are kept in the update since the signature of FunctionZ is still the same.
 
 ## Credit
 Created with some code from [github.com/vektra/mockery](https://github.com/vektra/mockery).
